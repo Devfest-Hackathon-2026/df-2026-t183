@@ -32,3 +32,8 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.log
+
+# ローカルの配信状態と認証ファイル
+.firebase/
+application_default_credentials.json
+*.pfx

@@ -1,0 +1,31 @@
+{
+  "name": "ai-ni-oshieru-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "predev": "node scripts/copy-pdf-data.mjs",
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "test": "node --test",
+    "prebuild": "node scripts/copy-pdf-data.mjs",
+    "build": "vite build",
+    "test:browser": "node scripts/recording-browser.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/noto-sans-jp": "5.3.1",
+    "core-js": "3.51.0",
+    "pdfjs-dist": "6.5.438",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.6"
+  }
+}

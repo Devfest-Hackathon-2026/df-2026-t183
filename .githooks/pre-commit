@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# コミット時に秘密ファイルの混入を止め、Go と Web の品質チェックを実行する。
+# --no-verify でスキップ可能（緊急時のみ。理由をコミットメッセージに書く）。
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# mise のshimsを優先する。無い環境では PATH のコマンドを使う。
+if [ -d "$HOME/.local/share/mise/shims" ]; then
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
+
+# 秘密ファイルのコミットを止める（.env.example は許可）。
+blocked="$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '(^|/)\.env(\..+)?$|\.(pem|p12|key)$|(^|/)service-account[^/]*\.json$|(^|/)credentials[^/]*\.json$' \
+  | grep -vE '(^|/)\.env\.example$' || true)"
+if [ -n "$blocked" ]; then
+  echo "ERROR: 秘密情報を含む可能性のあるファイルがステージされています。" >&2
+  echo "$blocked" | sed 's/^/  - /' >&2
+  echo "  git restore --staged <file> で外してください。" >&2
+  exit 1
+fi
+
+if [ -f backend/go.mod ]; then
+  echo "[pre-commit] backend: gofmt"
+  unformatted="$(cd backend && gofmt -l .)"
+  if [ -n "$unformatted" ]; then
+    echo "ERROR: gofmt が必要なファイルがあります。" >&2
+    echo "$unformatted" | sed 's/^/  - /' >&2
+    exit 1
+  fi
+  echo "[pre-commit] backend: go vet ./..."
+  (cd backend && go vet ./...)
+  echo "[pre-commit] backend: go test ./..."
+  (cd backend && go test ./...)
+fi
+
+if [ -f web/package.json ]; then
+  for script in lint test build; do
+    if (cd web && npm pkg get "scripts.$script" | grep -qv '^{}$'); then
+      echo "[pre-commit] web: npm run $script"
+      (cd web && npm run "$script")
+    fi
+  done
+fi
+
+exit 0

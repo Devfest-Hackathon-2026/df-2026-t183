@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# リポジトリ直下で実行: ./scripts/setup-hooks
+# core.hooksPath を .githooks に向け、pre-commit / commit-msg を有効化する。
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "エラー: git リポジトリ内で実行してください。" >&2
+  exit 1
+}
+
+cd "$ROOT"
+git config core.hooksPath .githooks
+echo "設定完了: core.hooksPath=.githooks（このリポジトリのみ）"

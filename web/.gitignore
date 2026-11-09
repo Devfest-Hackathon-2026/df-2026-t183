@@ -1,0 +1,6 @@
+/node_modules
+/.vite-recording-test/
+/dist/
+/public/pdfjs/
+/.env*
+!/.env.example
