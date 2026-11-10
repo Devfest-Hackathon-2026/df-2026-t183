@@ -1,0 +1,11 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "learningSessions", "fieldPath": "learningContent", "indexes": [] },
+    { "collectionGroup": "learningSessions", "fieldPath": "history", "indexes": [] },
+    { "collectionGroup": "learningSessions", "fieldPath": "summary", "indexes": [] },
+    { "collectionGroup": "learningSessions", "fieldPath": "payloadDigest", "indexes": [] },
+    { "collectionGroup": "learningSessions", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "viewKeys", "fieldPath": "expiresAt", "ttl": true, "indexes": [] }
+  ]
+}

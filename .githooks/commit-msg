@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# コミットメッセージからAIツール表記（Co-Authored-By等）を拒否する。
+set -euo pipefail
+
+msg_file="$1"
+msg="$(cat "$msg_file")"
+
+# 変更内容と無関係なtrailerの禁止
+if echo "$msg" | grep -qiE "^(co-authored-by|made with cursor|made-with:?[[:space:]]*cursor):";
+then
+  echo "ERROR: コミットメッセージにAIツール表記が含まれています。" >&2
+  echo "  - 'Co-Authored-By' / 'Made with Cursor' 等は禁止です" >&2
+  echo "  該当箇所を削除してから再度コミットしてください。" >&2
+  exit 1
+fi
+
+exit 0
